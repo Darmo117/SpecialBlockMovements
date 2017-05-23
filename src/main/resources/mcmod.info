@@ -1,0 +1,16 @@
+[
+{
+  "modid": "special_block_movements",
+  "name": "Special Block Movements",
+  "description": "This mod aims at reviving the mod UgoCraft.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Darmo"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
