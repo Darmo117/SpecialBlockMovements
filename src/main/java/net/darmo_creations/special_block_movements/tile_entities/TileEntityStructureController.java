@@ -11,7 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 
 public abstract class TileEntityStructureController<T extends EntityMovingStructure> extends TileEntity implements ITickable {
-  public static final int MAX_BLOCKS_NB = 100;
+  public static final int MAX_BLOCKS_NB = 300;
 
   protected boolean powered, adjusting;
   protected float speed;

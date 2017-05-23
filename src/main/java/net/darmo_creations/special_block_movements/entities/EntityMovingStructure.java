@@ -60,10 +60,12 @@ public abstract class EntityMovingStructure extends Entity {
   public void onEntityUpdate() {
     super.onEntityUpdate();
     if (!getEntityWorld().isRemote && !this.synced) {
-      ModNetworkWrapper.getModWapper().sendToAll(new SyncMovingStructureMessage(getBlocks(), getEntityId()));
+      ModNetworkWrapper.getModWapper().sendToAll(getSyncPacket());
       this.synced = true;
     }
   }
+
+  public abstract SyncMovingStructureMessage getSyncPacket();
 
   @Override
   protected void readEntityFromNBT(NBTTagCompound compound) {

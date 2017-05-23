@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class SyncMovingStructureMessage implements IMessage {
+public abstract class SyncMovingStructureMessage implements IMessage {
   private int entityId;
   private Map<BlockPos, IBlockState> blocks;
 
@@ -77,20 +77,26 @@ public class SyncMovingStructureMessage implements IMessage {
     }
   }
 
-  public static class ClientHandler implements IMessageHandler<SyncMovingStructureMessage, IMessage> {
+  protected static abstract class AbstractClientHandler<T extends SyncMovingStructureMessage, U extends EntityMovingStructure>
+      implements IMessageHandler<T, IMessage> {
     @Override
-    public IMessage onMessage(SyncMovingStructureMessage message, MessageContext ctx) {
+    public final IMessage onMessage(T message, MessageContext ctx) {
       Minecraft.getMinecraft().addScheduledTask(() -> {
         Entity e = NetworkUtils.getLocalWorld().getEntityByID(message.getEntityId());
 
-        if (e instanceof EntityMovingStructure) {
-          EntityMovingStructure s = (EntityMovingStructure) e;
-          s.setBlocks(message.getBlocks());
-          s.setSynced(true);
+        if (e != null && e.getClass() == getEntityClass()) {
+          U structure = getEntityClass().cast(e);
+          structure.setBlocks(message.getBlocks());
+          onMessage(message, ctx, structure);
+          structure.setSynced(true);
         }
       });
 
       return null;
     }
+
+    protected abstract Class<U> getEntityClass();
+
+    protected abstract void onMessage(T message, MessageContext ctx, U structure);
   }
 }

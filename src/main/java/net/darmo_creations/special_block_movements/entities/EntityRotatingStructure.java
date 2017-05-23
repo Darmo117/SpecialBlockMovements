@@ -3,6 +3,8 @@ package net.darmo_creations.special_block_movements.entities;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.darmo_creations.special_block_movements.network.SyncMovingStructureMessage;
+import net.darmo_creations.special_block_movements.network.SyncRotatingStructureMessage;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -33,6 +35,15 @@ public class EntityRotatingStructure extends EntityMovingStructure {
 
   public EnumFacing getFacing() {
     return this.facing;
+  }
+
+  public void setFacing(EnumFacing facing) {
+    this.facing = facing;
+  }
+
+  @Override
+  public SyncMovingStructureMessage getSyncPacket() {
+    return new SyncRotatingStructureMessage(getBlocks(), getEntityId(), getAngle(), getFacing());
   }
 
   @Override

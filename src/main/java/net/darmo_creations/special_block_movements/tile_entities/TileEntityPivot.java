@@ -53,9 +53,6 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
   @Override
   public void update() {
     super.update();
-    // System.out.println(this.angle);
-    // System.out.println(this.structure);
-
     @SuppressWarnings("deprecation")
     EnumFacing facing = getBlockType().getStateFromMeta(getBlockMetadata()).getValue(BlockPivot.FACING);
 

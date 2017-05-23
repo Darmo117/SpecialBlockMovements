@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.darmo_creations.special_block_movements.ModBlocks;
+import net.darmo_creations.special_block_movements.network.SyncMovingStructureMessage;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -24,6 +25,12 @@ public class EntitySlidingStructure extends EntityMovingStructure {
     super(world, blocks, x, y, z);
     setLengthAndAxis(blocks);
     this.startPos = new BlockPos(x, y, z);
+  }
+
+  @Override
+  public SyncMovingStructureMessage getSyncPacket() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   /**

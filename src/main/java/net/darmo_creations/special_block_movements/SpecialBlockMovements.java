@@ -4,7 +4,7 @@ import net.darmo_creations.special_block_movements.entities.EntityRotatingStruct
 import net.darmo_creations.special_block_movements.entities.EntitySlidingStructure;
 import net.darmo_creations.special_block_movements.network.GuiHandler;
 import net.darmo_creations.special_block_movements.network.ModNetworkWrapper;
-import net.darmo_creations.special_block_movements.network.SyncMovingStructureMessage;
+import net.darmo_creations.special_block_movements.network.SyncRotatingStructureMessage;
 import net.darmo_creations.special_block_movements.proxy.CommonProxy;
 import net.darmo_creations.special_block_movements.tile_entities.TileEntityInsulated;
 import net.darmo_creations.special_block_movements.tile_entities.TileEntityPivot;
@@ -33,7 +33,7 @@ public class SpecialBlockMovements {
   public static SpecialBlockMovements instance;
 
   /** Client and server proxies. */
-  @SidedProxy(clientSide = "net.mcfr.darmo_creations.special_block_movements.ClientProxy", serverSide = "net.mcfr.darmo_creations.special_block_movements.CommonProxy")
+  @SidedProxy(clientSide = "net.darmo_creations.special_block_movements.proxy.ClientProxy", serverSide = "net.darmo_creations.special_block_movements.proxy.CommonProxy")
   public static CommonProxy proxy;
 
   @EventHandler
@@ -57,7 +57,7 @@ public class SpecialBlockMovements {
    * Registers network packets.
    */
   private void registerPackets() {
-    ModNetworkWrapper.registerPacket(SyncMovingStructureMessage.ClientHandler.class, SyncMovingStructureMessage.class, Side.CLIENT);
+    ModNetworkWrapper.registerPacket(SyncRotatingStructureMessage.ClientHandler.class, SyncRotatingStructureMessage.class, Side.CLIENT);
   }
 
   /**
