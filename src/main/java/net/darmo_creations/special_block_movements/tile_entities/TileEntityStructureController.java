@@ -31,6 +31,18 @@ public abstract class TileEntityStructureController<T extends EntityMovingStruct
     return this.powered;
   }
 
+  public boolean isAdjusting() {
+    return this.adjusting;
+  }
+
+  public float getSpeed() {
+    return this.speed;
+  }
+
+  public void setSpeed(float speed) {
+    this.speed = speed;
+  }
+
   public void setPowered(boolean powered) {
     this.powered = powered;
     powerChanged();

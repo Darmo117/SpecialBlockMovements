@@ -36,6 +36,26 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
     this.turning = false;
   }
 
+  public float getAngle() {
+    return this.angle;
+  }
+
+  public void setAngle(float angle) {
+    this.angle = angle;
+  }
+
+  public boolean endsRotation() {
+    return this.endRotation;
+  }
+
+  public void setEndRotation(boolean endRotation) {
+    this.endRotation = endRotation;
+  }
+
+  public boolean isTurning() {
+    return this.turning;
+  }
+
   @Override
   public void powerChanged() {
     if (!this.powered && this.angle > 1 && !this.adjusting) {
@@ -48,14 +68,6 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
         this.speed = -this.speed;
       this.adjusting = false;
     }
-  }
-
-  public float getAngle() {
-    return this.angle;
-  }
-
-  public void setAngle(float angle) {
-    this.angle = angle;
   }
 
   @Override
