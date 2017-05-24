@@ -7,8 +7,10 @@ import java.util.Map;
 import net.darmo_creations.special_block_movements.blocks.BlockInsulated;
 import net.darmo_creations.special_block_movements.blocks.BlockPivot;
 import net.darmo_creations.special_block_movements.entities.EntityRotatingStructure;
+import net.darmo_creations.special_block_movements.utils.TileEntityUtils;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -25,11 +27,13 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
   private float angle;
   /** Turning-off behavior */
   private boolean endRotation;
+  private boolean turning;
 
   public TileEntityPivot() {
     super();
     this.angle = 0;
     this.endRotation = false;
+    this.turning = false;
   }
 
   @Override
@@ -50,9 +54,12 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
     return this.angle;
   }
 
+  public void setAngle(float angle) {
+    this.angle = angle;
+  }
+
   @Override
   public void update() {
-    super.update();
     @SuppressWarnings("deprecation")
     EnumFacing facing = getBlockType().getStateFromMeta(getBlockMetadata()).getValue(BlockPivot.FACING);
 
@@ -63,15 +70,20 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
 
         if (!getWorld().isAirBlock(pos)) {
           this.blocksNb = 0;
-          if (!getWorld().isRemote && exploreBlocks(pos, pos, blocks)) {
-            this.structure = new EntityRotatingStructure(getWorld(), blocks, facing, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-            getWorld().spawnEntity(this.structure);
-            blocks.forEach((p, __) -> getWorld().setBlockToAir(pos.add(p)));
+          if (exploreBlocks(pos, pos, blocks)) {
+            if (!getWorld().isRemote) {
+              this.structure = new EntityRotatingStructure(getWorld(), blocks, facing, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+              getWorld().spawnEntity(this.structure);
+              blocks.forEach((p, __) -> getWorld().setBlockState(pos.add(p), Blocks.AIR.getDefaultState(), 2));
+            }
+            this.turning = true;
+            markDirty();
+            TileEntityUtils.sendTileEntityUpdate(getWorld(), this);
           }
         }
       }
 
-      if (this.structure != null) {
+      if (this.turning) {
         if (this.adjusting && !this.endRotation && this.angle < 1 || this.endRotation && this.angle + this.speed >= 360) {
           this.angle = 0;
           if (!this.endRotation)
@@ -80,11 +92,11 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
         }
         else
           this.angle = (this.angle + this.speed) % 360;
-        this.structure.setAngle(this.angle);
+        if (this.structure != null)
+          this.structure.setAngle(this.angle);
       }
     }
     else if (this.structure != null) {
-      // TODO place blocks in the new configuration if different
       // FIXME beware "double-blocks"
       while (!this.structure.getBlocks().isEmpty()) {
         for (Iterator<Map.Entry<BlockPos, IBlockState>> it = this.structure.getBlocks().entrySet().iterator(); it.hasNext();) {
@@ -101,6 +113,7 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
       }
       this.structure.setDead();
       this.structure = null;
+      this.turning = false;
     }
   }
 
@@ -134,6 +147,7 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
     super.writeToNBT(compound);
     compound.setFloat("Angle", this.angle);
     compound.setBoolean("EndRotation", this.endRotation);
+    compound.setBoolean("Turning", this.turning);
 
     return compound;
   }
@@ -143,5 +157,6 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
     super.readFromNBT(compound);
     this.angle = compound.getFloat("Angle");
     this.endRotation = compound.getBoolean("EndRotation");
+    this.turning = compound.getBoolean("Turning");
   }
 }

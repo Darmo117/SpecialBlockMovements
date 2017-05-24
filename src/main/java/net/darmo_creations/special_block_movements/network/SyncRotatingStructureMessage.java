@@ -49,7 +49,6 @@ public class SyncRotatingStructureMessage extends SyncMovingStructureMessage {
   public static class ClientHandler extends AbstractClientHandler<SyncRotatingStructureMessage, EntityRotatingStructure> {
     @Override
     protected void onMessage(SyncRotatingStructureMessage message, MessageContext ctx, EntityRotatingStructure structure) {
-      structure.setAngle(message.getAngle());
       structure.setFacing(message.getFacing());
     }
 

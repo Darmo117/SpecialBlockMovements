@@ -34,32 +34,13 @@ public abstract class TileEntityStructureController<T extends EntityMovingStruct
   public void setPowered(boolean powered) {
     this.powered = powered;
     powerChanged();
-    if (getWorld() != null) {
-      TileEntityUtils.sendTileEntityUpdate(getWorld(), this);
+    if (hasWorld()) {
       markDirty();
+      TileEntityUtils.sendTileEntityUpdate(getWorld(), this);
     }
   }
 
   public abstract void powerChanged();
-
-  @SuppressWarnings("unchecked")
-  @Override
-  public void update() {
-    if (this.structure == null && this.structureId != -1) {
-      try {
-        System.out.println(getWorld().getEntities(EntityMovingStructure.class, e -> {
-          System.out.println(":" + e.getSaveId() + " " + this.structureId);
-          return true;
-        }));
-        getWorld().getEntities(EntityMovingStructure.class, e -> e.getSaveId() == this.structureId).stream().findFirst().ifPresent(e -> {
-          this.structure = (T) e;
-          this.structure.setSaveId(this.structure.getEntityId());
-        });
-      }
-      catch (ClassCastException __) {}
-      this.structureId = -1;
-    }
-  }
 
   public Optional<T> getStructure() {
     return Optional.ofNullable(this.structure);
@@ -88,16 +69,11 @@ public abstract class TileEntityStructureController<T extends EntityMovingStruct
     this.speed = compound.getFloat("Speed");
     this.adjusting = compound.getBoolean("Adjusting");
     this.structureId = compound.getInteger("StructureId");
+
     if (hasWorld() && this.structureId != -1) {
       try {
-        // System.out.println(":" + this.structureId);
-        System.out.println(getWorld().getEntities(EntityMovingStructure.class, e -> {
-          // System.out.println(":" + e.getSaveId());
-          return true;
-        }));
         getWorld().getEntities(EntityMovingStructure.class, e -> e.getSaveId() == this.structureId + 1).stream().findFirst().ifPresent(
             e -> this.structure = (T) e);
-        // System.out.println(this.structure);
       }
       catch (ClassCastException __) {}
       this.structureId = -1;

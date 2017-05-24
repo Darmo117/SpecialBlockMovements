@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=down":  { "model": "special_block_movements:pivot_vertical", "x": 180 },
+    "facing=up":    { "model": "special_block_movements:pivot_vertical" },
+    "facing=north": { "model": "special_block_movements:pivot" },
+    "facing=south": { "model": "special_block_movements:pivot", "y": 180 },
+    "facing=west":  { "model": "special_block_movements:pivot", "y": 270 },
+    "facing=east":  { "model": "special_block_movements:pivot", "y": 90 }
+  }
+}
