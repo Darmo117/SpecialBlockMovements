@@ -2,7 +2,7 @@ package net.darmo_creations.special_block_movements;
 
 import net.darmo_creations.special_block_movements.entities.EntityRotatingStructure;
 import net.darmo_creations.special_block_movements.entities.EntitySlidingStructure;
-import net.darmo_creations.special_block_movements.network.GuiHandler;
+import net.darmo_creations.special_block_movements.guis.GuiHandler;
 import net.darmo_creations.special_block_movements.network.ModNetworkWrapper;
 import net.darmo_creations.special_block_movements.network.SyncRotatingStructureMessage;
 import net.darmo_creations.special_block_movements.proxy.CommonProxy;
@@ -30,7 +30,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class SpecialBlockMovements {
   /** Mod instance. */
   @Instance
-  public static SpecialBlockMovements instance;
+  public static SpecialBlockMovements theMod;
 
   /** Client and server proxies. */
   @SidedProxy(clientSide = "net.darmo_creations.special_block_movements.proxy.ClientProxy", serverSide = "net.darmo_creations.special_block_movements.proxy.CommonProxy")
@@ -49,7 +49,7 @@ public class SpecialBlockMovements {
   @EventHandler
   public void init(FMLInitializationEvent e) {
     proxy.register();
-    NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+    NetworkRegistry.INSTANCE.registerGuiHandler(theMod, new GuiHandler());
     registerPackets();
   }
 

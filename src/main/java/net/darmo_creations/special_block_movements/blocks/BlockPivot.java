@@ -1,5 +1,7 @@
 package net.darmo_creations.special_block_movements.blocks;
 
+import net.darmo_creations.special_block_movements.SpecialBlockMovements;
+import net.darmo_creations.special_block_movements.guis.CustomGuiScreen;
 import net.darmo_creations.special_block_movements.tile_entities.TileEntityPivot;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,12 +22,7 @@ public class BlockPivot extends BlockStructureController<TileEntityPivot> {
     TileEntity te = world.getTileEntity(pos);
 
     if (te instanceof TileEntityPivot) {
-      TileEntityPivot pivot = (TileEntityPivot) te;
-
-      System.out.println("Speed: " + pivot.getSpeed());
-      System.out.println("Angle: " + pivot.getAngle());
-      System.out.println("Ends rotation: " + pivot.endsRotation());
-
+      player.openGui(SpecialBlockMovements.theMod, CustomGuiScreen.PIVOT.ordinal(), world, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }
 

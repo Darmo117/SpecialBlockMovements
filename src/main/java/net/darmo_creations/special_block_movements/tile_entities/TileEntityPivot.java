@@ -25,6 +25,7 @@ import net.minecraft.util.math.BlockPos;
  */
 public class TileEntityPivot extends TileEntityStructureController<EntityRotatingStructure> {
   private float angle;
+  private boolean isClockwise;
   /** Turning-off behavior */
   private boolean endRotation;
   private boolean turning;
@@ -32,6 +33,7 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
   public TileEntityPivot() {
     super();
     this.angle = 0;
+    this.isClockwise = true;
     this.endRotation = false;
     this.turning = false;
   }
@@ -42,6 +44,14 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
 
   public void setAngle(float angle) {
     this.angle = angle;
+  }
+
+  public boolean isClockwise() {
+    return this.isClockwise;
+  }
+
+  public void setClockwise(boolean isClockwise) {
+    this.isClockwise = isClockwise;
   }
 
   public boolean endsRotation() {
@@ -157,9 +167,10 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
-    compound.setFloat("Angle", this.angle);
-    compound.setBoolean("EndRotation", this.endRotation);
-    compound.setBoolean("Turning", this.turning);
+    compound.setFloat("Angle", getAngle());
+    compound.setBoolean("Clockwise", isClockwise());
+    compound.setBoolean("EndRotation", endsRotation());
+    compound.setBoolean("Turning", isTurning());
 
     return compound;
   }
@@ -167,8 +178,9 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
   @Override
   public void readFromNBT(NBTTagCompound compound) {
     super.readFromNBT(compound);
-    this.angle = compound.getFloat("Angle");
-    this.endRotation = compound.getBoolean("EndRotation");
+    setAngle(compound.getFloat("Angle"));
+    setClockwise(compound.getBoolean("Clockwise"));
+    setEndRotation(compound.getBoolean("EndRotation"));
     this.turning = compound.getBoolean("Turning");
   }
 }
