@@ -44,7 +44,6 @@ public class TileEntitySlider extends TileEntityStructureController<EntitySlidin
   public void update() {
     @SuppressWarnings("deprecation")
     EnumFacing facing = getBlockType().getStateFromMeta(getBlockMetadata()).getValue(BlockPivot.FACING);
-    float actualSpeed = getSpeed() * getDirectionOffset();
 
     if (isPowered() || isAdjusting()) {
       if (!getStructure().isPresent()) {
@@ -64,6 +63,8 @@ public class TileEntitySlider extends TileEntityStructureController<EntitySlidin
       }
 
       if (getStructure() != null) {
+        float actualSpeed = getSpeed() * getDirectionOffset();
+
         if (isAdjusting() && this.offset < 1 || this.offset >= getStructure().get().getLength()) {
           this.offset = this.offset < 1 ? 0 : getStructure().get().getLength();
           inverseDirection();
