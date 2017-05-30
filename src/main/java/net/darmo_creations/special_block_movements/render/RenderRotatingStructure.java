@@ -38,7 +38,7 @@ public class RenderRotatingStructure extends Render<EntityRotatingStructure> {
     GlStateManager.translate(x, y, z);
     if (rotateY == 0)
       GlStateManager.translate(0, 0.5, 0);
-    GlStateManager.rotate(-entity.getAngle() * entity.getFacing().getAxisDirection().getOffset(), rotateX, rotateY, rotateZ);
+    GlStateManager.rotate(entity.getAngle() * entity.getFacing().getAxisDirection().getOffset(), rotateX, rotateY, rotateZ);
     if (rotateY == 0)
       GlStateManager.translate(0, -0.5, 0);
     GlStateManager.translate(-blockpos.getX() - 0.5, -blockpos.getY(), -blockpos.getZ() - 0.5);

@@ -68,15 +68,15 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
 
   @Override
   public void powerChanged() {
-    if (!this.powered && this.angle > 1 && !this.adjusting) {
+    if (!isPowered() && (!this.isClockwise && this.angle % 360 > 1 || this.isClockwise && this.angle % 360 < -1) && !isAdjusting()) {
       if (!this.endRotation)
-        this.speed = -this.speed;
-      this.adjusting = true;
+        inverseDirection();
+      setAdjusting(true);
     }
-    if (this.powered && this.adjusting) {
+    if (isPowered() && isAdjusting()) {
       if (!this.endRotation)
-        this.speed = -this.speed;
-      this.adjusting = false;
+        inverseDirection();
+      setAdjusting(false);
     }
   }
 
@@ -85,20 +85,22 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
     @SuppressWarnings("deprecation")
     EnumFacing facing = getBlockType().getStateFromMeta(getBlockMetadata()).getValue(BlockPivot.FACING);
 
-    if (isPowered() || this.adjusting) {
-      if (this.structure == null && this.structureId == -1) {
+    if (isPowered() || isAdjusting()) {
+      if (!getStructure().isPresent() && getStructureId() == -1) {
         Map<BlockPos, IBlockState> blocks = new HashMap<>();
         BlockPos pos = getPos().offset(facing);
 
         if (!getWorld().isAirBlock(pos)) {
-          this.blocksNb = 0;
+          resetBlocksCount();
           if (exploreBlocks(pos, pos, blocks)) {
             if (!getWorld().isRemote) {
-              this.structure = new EntityRotatingStructure(getWorld(), blocks, facing, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-              getWorld().spawnEntity(this.structure);
+              setStructure(new EntityRotatingStructure(getWorld(), blocks, facing, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5));
+              getWorld().spawnEntity(getStructure().get());
               blocks.forEach((p, __) -> getWorld().setBlockState(pos.add(p), Blocks.AIR.getDefaultState(), 2));
             }
             this.turning = true;
+            if (this.isClockwise && getDirectionOffset() == 1 || !this.isClockwise && getDirectionOffset() == -1)
+              inverseDirection();
             markDirty();
             TileEntityUtils.sendTileEntityUpdate(getWorld(), this);
           }
@@ -106,22 +108,25 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
       }
 
       if (this.turning) {
-        if (this.adjusting && !this.endRotation && this.angle < 1 || this.endRotation && this.angle + this.speed >= 360) {
+        float actualSpeed = getSpeed() * getDirectionOffset();
+
+        if (isAdjusting() && !this.endRotation && (!this.isClockwise && this.angle < 1 || this.isClockwise && this.angle > -1)
+            || this.endRotation
+                && (!this.isClockwise && this.angle + actualSpeed >= 360 || this.isClockwise && this.angle + actualSpeed <= -360)) {
           this.angle = 0;
           if (!this.endRotation)
-            this.speed = -this.speed;
-          this.adjusting = false;
+            inverseDirection();
+          setAdjusting(false);
         }
         else
-          this.angle = (this.angle + this.speed) % 360;
-        if (this.structure != null)
-          this.structure.setAngle(this.angle);
+          this.angle += actualSpeed;
+        getStructure().ifPresent(s -> s.setAngle(this.angle));
       }
     }
-    else if (this.structure != null) {
+    else if (getStructure().isPresent()) {
       // FIXME beware "double-blocks"
-      while (!this.structure.getBlocks().isEmpty()) {
-        for (Iterator<Map.Entry<BlockPos, IBlockState>> it = this.structure.getBlocks().entrySet().iterator(); it.hasNext();) {
+      while (!getStructure().get().getBlocks().isEmpty()) {
+        for (Iterator<Map.Entry<BlockPos, IBlockState>> it = getStructure().get().getBlocks().entrySet().iterator(); it.hasNext();) {
           Map.Entry<BlockPos, IBlockState> entry = it.next();
           BlockPos pos = getPos().add(entry.getKey()).offset(facing);
           IBlockState state = entry.getValue();
@@ -133,14 +138,14 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
         }
         break; // TEMP
       }
-      this.structure.setDead();
-      this.structure = null;
+      getStructure().get().setDead();
+      setStructure(null);
       this.turning = false;
     }
   }
 
   private boolean exploreBlocks(BlockPos startPos, BlockPos currentPos, Map<BlockPos, IBlockState> blocks) {
-    boolean ok = this.blocksNb <= MAX_BLOCKS_NB;
+    boolean ok = getBlocksCount() <= MAX_BLOCKS_NB;
 
     if (!ok)
       return false;
@@ -154,7 +159,7 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
 
       if (!blocks.containsKey(relPos) && !getWorld().isAirBlock(nextPos) && !(state.getBlock() instanceof ITileEntityProvider)
           && !(state.getBlock() instanceof BlockPivot) && !(state.getBlock() instanceof BlockInsulated)) {
-        this.blocksNb++;
+        addBlocksCount();
         ok &= exploreBlocks(startPos, nextPos, blocks);
         if (!ok)
           break;
@@ -167,10 +172,10 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
-    compound.setFloat("Angle", getAngle());
-    compound.setBoolean("Clockwise", isClockwise());
-    compound.setBoolean("EndRotation", endsRotation());
-    compound.setBoolean("Turning", isTurning());
+    compound.setFloat("Angle", this.angle);
+    compound.setBoolean("Clockwise", this.isClockwise);
+    compound.setBoolean("EndRotation", this.endRotation);
+    compound.setBoolean("Turning", this.turning);
 
     return compound;
   }

@@ -4,6 +4,7 @@ import net.darmo_creations.special_block_movements.entities.EntityRotatingStruct
 import net.darmo_creations.special_block_movements.entities.EntitySlidingStructure;
 import net.darmo_creations.special_block_movements.guis.GuiHandler;
 import net.darmo_creations.special_block_movements.network.ModNetworkWrapper;
+import net.darmo_creations.special_block_movements.network.SyncPivotMessage;
 import net.darmo_creations.special_block_movements.network.SyncRotatingStructureMessage;
 import net.darmo_creations.special_block_movements.proxy.CommonProxy;
 import net.darmo_creations.special_block_movements.tile_entities.TileEntityInsulated;
@@ -58,6 +59,8 @@ public class SpecialBlockMovements {
    */
   private void registerPackets() {
     ModNetworkWrapper.registerPacket(SyncRotatingStructureMessage.ClientHandler.class, SyncRotatingStructureMessage.class, Side.CLIENT);
+    ModNetworkWrapper.registerPacket(SyncPivotMessage.ServerHandler.class, SyncPivotMessage.class, Side.SERVER);
+    ModNetworkWrapper.registerPacket(SyncPivotMessage.ClientHandler.class, SyncPivotMessage.class, Side.CLIENT);
   }
 
   /**

@@ -3,6 +3,8 @@ package net.darmo_creations.special_block_movements.guis;
 import java.io.IOException;
 
 import net.darmo_creations.special_block_movements.Constants;
+import net.darmo_creations.special_block_movements.network.ModNetworkWrapper;
+import net.darmo_creations.special_block_movements.network.SyncPivotMessage;
 import net.darmo_creations.special_block_movements.tile_entities.TileEntityPivot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -34,7 +36,7 @@ public class GuiPivot extends GuiScreen {
     this.pivot = pivot;
     this.xSize = 130;
     this.ySize = 126;
-    this.speed = this.pivot.getSpeed();
+    this.speed = Math.abs(this.pivot.getSpeed());
     this.clockwise = pivot.isClockwise();
     this.endRotation = pivot.endsRotation();
   }
@@ -54,7 +56,8 @@ public class GuiPivot extends GuiScreen {
   protected void actionPerformed(GuiButton button) throws IOException {
     switch (button.id) {
       case VALIDATE_BTN_ID:
-        // TODO packet
+        ModNetworkWrapper.getModWapper().sendToServer(
+            new SyncPivotMessage(this.pivot.getPos(), this.speed, this.clockwise, this.endRotation));
         this.mc.displayGuiScreen(null);
         if (this.mc.currentScreen == null) {
           this.mc.setIngameFocus();
@@ -85,7 +88,7 @@ public class GuiPivot extends GuiScreen {
   private void updateButtons() {
     this.decSpeedBtn.enabled = this.speed > 1;
     this.incSpeedBtn.enabled = this.speed < 10;
-    this.rotationDirBtn.setSelected(!this.clockwise);
+    this.rotationDirBtn.setSelected(this.clockwise);
     this.switchOffModeBtn.setSelected(!this.endRotation);
   }
 

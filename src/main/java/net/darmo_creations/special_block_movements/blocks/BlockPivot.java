@@ -22,7 +22,8 @@ public class BlockPivot extends BlockStructureController<TileEntityPivot> {
     TileEntity te = world.getTileEntity(pos);
 
     if (te instanceof TileEntityPivot) {
-      player.openGui(SpecialBlockMovements.theMod, CustomGuiScreen.PIVOT.ordinal(), world, pos.getX(), pos.getY(), pos.getZ());
+      if (!((TileEntityPivot) te).isTurning())
+        player.openGui(SpecialBlockMovements.theMod, CustomGuiScreen.PIVOT.ordinal(), world, pos.getX(), pos.getY(), pos.getZ());
       return true;
     }
 

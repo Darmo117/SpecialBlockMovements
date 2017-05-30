@@ -26,13 +26,13 @@ public class TileEntitySlider extends TileEntityStructureController<EntitySlidin
 
   @Override
   public void powerChanged() {
-    if (!this.powered && this.offset > 1 && !this.adjusting) {
-      this.speed = -this.speed;
-      this.adjusting = true;
+    if (!isPowered() && this.offset > 1 && !isAdjusting()) {
+      inverseDirection();
+      setAdjusting(true);
     }
-    if (this.powered && this.adjusting) {
-      this.speed = -this.speed;
-      this.adjusting = false;
+    if (isPowered() && isAdjusting()) {
+      inverseDirection();
+      setAdjusting(false);
     }
   }
 
@@ -44,40 +44,41 @@ public class TileEntitySlider extends TileEntityStructureController<EntitySlidin
   public void update() {
     @SuppressWarnings("deprecation")
     EnumFacing facing = getBlockType().getStateFromMeta(getBlockMetadata()).getValue(BlockPivot.FACING);
+    float actualSpeed = getSpeed() * getDirectionOffset();
 
-    if (isPowered() || this.adjusting) {
-      if (this.structure == null) {
+    if (isPowered() || isAdjusting()) {
+      if (!getStructure().isPresent()) {
         Map<BlockPos, IBlockState> blocks = new HashMap<>();
         BlockPos pos = getPos().offset(facing);
 
         if (!getWorld().isAirBlock(pos)) {
-          this.blocksNb = 0;
+          resetBlocksCount();
           this.plusPos = null;
           this.minusPos = null;
           if (exploreBlocks(pos, pos, blocks)) {
-            this.structure = new EntitySlidingStructure(getWorld(), blocks, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-            getWorld().spawnEntity(this.structure);
+            setStructure(new EntitySlidingStructure(getWorld(), blocks, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5));
+            getWorld().spawnEntity(getStructure().get());
             blocks.forEach((p, __) -> getWorld().setBlockToAir(pos.add(p)));
           }
         }
       }
 
-      if (this.structure != null) {
-        if (this.adjusting && this.offset < 1 || this.offset >= this.structure.getLength()) {
-          this.offset = this.offset < 1 ? 0 : this.structure.getLength();
-          this.speed = -this.speed;
-          this.adjusting = false;
+      if (getStructure() != null) {
+        if (isAdjusting() && this.offset < 1 || this.offset >= getStructure().get().getLength()) {
+          this.offset = this.offset < 1 ? 0 : getStructure().get().getLength();
+          inverseDirection();
+          setAdjusting(false);
         }
         else
-          this.offset += this.speed;
-        this.structure.setOffset(this.offset);
+          this.offset += actualSpeed;
+        getStructure().get().setOffset(this.offset);
       }
     }
-    else if (this.structure != null) {
+    else if (getStructure() != null) {
       // TODO place blocks in the new configuration if different
       // FIXME beware "double-blocks"
-      while (!this.structure.getBlocks().isEmpty()) {
-        for (Iterator<Map.Entry<BlockPos, IBlockState>> it = this.structure.getBlocks().entrySet().iterator(); it.hasNext();) {
+      while (!getStructure().get().getBlocks().isEmpty()) {
+        for (Iterator<Map.Entry<BlockPos, IBlockState>> it = getStructure().get().getBlocks().entrySet().iterator(); it.hasNext();) {
           Map.Entry<BlockPos, IBlockState> entry = it.next();
           BlockPos pos = getPos().add(entry.getKey()).offset(facing);
           IBlockState state = entry.getValue();
@@ -88,14 +89,14 @@ public class TileEntitySlider extends TileEntityStructureController<EntitySlidin
           }
         }
       }
-      this.structure.setDead();
-      this.structure = null;
+      getStructure().get().setDead();
+      setStructure(null);
     }
   }
 
   // TODO check a + block and a - block are there (in front of each other)
   private boolean exploreBlocks(BlockPos startPos, BlockPos currentPos, Map<BlockPos, IBlockState> blocks) {
-    boolean ok = this.blocksNb <= MAX_BLOCKS_NB;
+    boolean ok = getBlocksCount() <= MAX_BLOCKS_NB;
 
     if (!ok)
       return false;
@@ -124,7 +125,7 @@ public class TileEntitySlider extends TileEntityStructureController<EntitySlidin
 
       if (!blocks.containsKey(relPos) && !getWorld().isAirBlock(nextPos) && !(state1.getBlock() instanceof ITileEntityProvider)
           && !(state1.getBlock() instanceof BlockSlider) && !(state.getBlock() instanceof BlockInsulated)) {
-        this.blocksNb++;
+        addBlocksCount();
         ok &= exploreBlocks(startPos, nextPos, blocks);
         if (!ok)
           break;
@@ -137,7 +138,7 @@ public class TileEntitySlider extends TileEntityStructureController<EntitySlidin
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     super.writeToNBT(compound);
-    compound.setFloat("Offset", getOffset());
+    compound.setFloat("Offset", this.offset);
 
     return compound;
   }

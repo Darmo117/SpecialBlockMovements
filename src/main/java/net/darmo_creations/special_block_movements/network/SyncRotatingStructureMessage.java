@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class SyncRotatingStructureMessage extends SyncMovingStructureMessage {
-  private float angle;
+  private float angle; // TODO remove
   private EnumFacing facing;
 
   public SyncRotatingStructureMessage() {
@@ -35,14 +35,12 @@ public class SyncRotatingStructureMessage extends SyncMovingStructureMessage {
   @Override
   public void fromBytes(ByteBuf buf) {
     super.fromBytes(buf);
-    this.angle = buf.readFloat();
     this.facing = EnumFacing.getFront(buf.readInt());
   }
 
   @Override
   public void toBytes(ByteBuf buf) {
     super.toBytes(buf);
-    buf.writeFloat(getAngle());
     buf.writeInt(getFacing().getIndex());
   }
 

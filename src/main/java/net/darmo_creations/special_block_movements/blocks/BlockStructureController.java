@@ -54,6 +54,7 @@ public abstract class BlockStructureController<T extends TileEntityStructureCont
   @Override
   public void breakBlock(World world, BlockPos pos, IBlockState state) {
     TileEntity te = world.getTileEntity(pos);
+
     if (te != null && te.getClass() == this.tileEntityClass) { // TODO place back blocks
       this.tileEntityClass.cast(te).getStructure().ifPresent(s -> s.setDead());
     }
