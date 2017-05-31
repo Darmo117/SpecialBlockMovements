@@ -1,6 +1,8 @@
 package net.darmo_creations.special_block_movements.guis;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.darmo_creations.special_block_movements.Constants;
 import net.darmo_creations.special_block_movements.network.ModNetworkWrapper;
@@ -10,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiPivot extends GuiScreen {
@@ -34,7 +37,7 @@ public class GuiPivot extends GuiScreen {
   public GuiPivot(TileEntityPivot pivot) {
     this.allowUserInput = false;
     this.pivot = pivot;
-    this.xSize = 130;
+    this.xSize = 160;
     this.ySize = 126;
     this.speed = Math.abs(this.pivot.getSpeed());
     this.clockwise = pivot.isClockwise();
@@ -98,34 +101,31 @@ public class GuiPivot extends GuiScreen {
     this.mc.getTextureManager().bindTexture(TEXTURE);
     int x = (this.width - this.xSize) / 2;
     int y = (this.height - this.ySize) / 2;
-    String title = "Pivot"; // TEMP
+    String title = I18n.format("gui.pivot.title");
     this.fontRendererObj.drawString(title, (this.width - this.fontRendererObj.getStringWidth(title)) / 2, y + 8, 0xffffff);
+    List<String> tooltip = new ArrayList<>();
 
-    int newX = x;
     int newY = y + 30;
 
-    this.fontRendererObj.drawString("Speed"/* TEMP */, newX, newY, 10526880);
-    newX += 88;
-    String text = (int) this.speed + "°/tick";
-    this.fontRendererObj.drawString(text, newX - this.fontRendererObj.getStringWidth(text) - 10, newY, 0xffffff);
-    this.decSpeedBtn.xPosition = newX;
-    this.decSpeedBtn.yPosition = newY - 6;
-    newX += this.validateBtn.width + 2;
+    this.fontRendererObj.drawString(I18n.format("gui.pivot.speed.label"), x, newY, 10526880);
+    int newX = x + this.xSize - this.incSpeedBtn.width;
     this.incSpeedBtn.xPosition = newX;
     this.incSpeedBtn.yPosition = newY - 6;
+    newX -= this.decSpeedBtn.width + 2;
+    this.decSpeedBtn.xPosition = newX;
+    this.decSpeedBtn.yPosition = newY - 6;
+    String text = (int) this.speed + "°/tick";
+    newX -= this.fontRendererObj.getStringWidth(text) + 10;
+    this.fontRendererObj.drawString(text, newX, newY, 0xffffff);
 
     newY += 22;
-    newX = x;
-    this.fontRendererObj.drawString("Rotation direction"/* TEMP */, newX, newY, 10526880);
-    newX += 110;
-    this.rotationDirBtn.xPosition = newX;
+    this.fontRendererObj.drawString(I18n.format("gui.pivot.direction.label"), x, newY, 10526880);
+    this.rotationDirBtn.xPosition = x + this.xSize - this.rotationDirBtn.width;
     this.rotationDirBtn.yPosition = newY - 6;
 
     newY += 22;
-    newX = x;
-    this.fontRendererObj.drawString("Switch-off behavior"/* TEMP */, newX, newY, 10526880);
-    newX += 110;
-    this.switchOffModeBtn.xPosition = newX;
+    this.fontRendererObj.drawString(I18n.format("gui.pivot.behavior.label"), x, newY, 10526880);
+    this.switchOffModeBtn.xPosition = x + this.xSize - this.switchOffModeBtn.width;
     this.switchOffModeBtn.yPosition = newY - 6;
 
     newY = y + this.ySize - this.validateBtn.height - 10;
@@ -134,7 +134,13 @@ public class GuiPivot extends GuiScreen {
     this.cancelBtn.xPosition = x + this.xSize - this.cancelBtn.width;
     this.cancelBtn.yPosition = newY;
 
+    if (this.rotationDirBtn.isMouseOver())
+      tooltip.add(I18n.format("gui.pivot.direction.tooltip." + (this.rotationDirBtn.isSelected() ? "clockwise" : "counterclockwise")));
+    if (this.switchOffModeBtn.isMouseOver())
+      tooltip.add(I18n.format("gui.pivot.behavior.tooltip." + (this.switchOffModeBtn.isSelected() ? "go_back" : "end_turn")));
+
     super.drawScreen(mouseX, mouseY, partialTicks);
+    drawHoveringText(tooltip, mouseX, mouseY);
   }
 
   private class Button extends GuiButton {

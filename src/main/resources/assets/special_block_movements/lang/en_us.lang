@@ -1,1 +1,10 @@
 tile.special_block_movements_pivot.name=Pivot
+
+gui.pivot.title=Pivot
+gui.pivot.speed.label=Speed
+gui.pivot.direction.label=Rotation Direction
+gui.pivot.behavior.label=Switch-off Behavior
+gui.pivot.direction.tooltip.clockwise=Clockwise
+gui.pivot.direction.tooltip.counterclockwise=Counterclockwise
+gui.pivot.behavior.tooltip.go_back=Go Back to Start
+gui.pivot.behavior.tooltip.end_turn=End Turn

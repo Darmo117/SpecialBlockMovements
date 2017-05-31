@@ -96,6 +96,7 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
             if (!getWorld().isRemote) {
               setStructure(new EntityRotatingStructure(getWorld(), blocks, facing, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5));
               getWorld().spawnEntity(getStructure().get());
+              // TEMP use flag 3 instead.
               blocks.forEach((p, __) -> getWorld().setBlockState(pos.add(p), Blocks.AIR.getDefaultState(), 2));
             }
             this.turning = true;
