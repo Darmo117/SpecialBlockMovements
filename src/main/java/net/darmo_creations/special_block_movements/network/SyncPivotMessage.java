@@ -76,7 +76,7 @@ public class SyncPivotMessage implements IMessage {
           pivot.setClockwise(message.isClockwise());
           pivot.setEndRotation(message.endsRotation());
 
-          ModNetworkWrapper.getModWapper().sendTo(message, player);
+          ModNetworkWrapper.getModWapper().sendToAll(message);
         }
       });
 
