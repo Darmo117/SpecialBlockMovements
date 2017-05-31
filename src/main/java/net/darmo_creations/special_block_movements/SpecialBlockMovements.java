@@ -3,6 +3,7 @@ package net.darmo_creations.special_block_movements;
 import net.darmo_creations.special_block_movements.entities.EntityRotatingStructure;
 import net.darmo_creations.special_block_movements.entities.EntitySlidingStructure;
 import net.darmo_creations.special_block_movements.guis.GuiHandler;
+import net.darmo_creations.special_block_movements.insulation.InsulationHandler;
 import net.darmo_creations.special_block_movements.network.ModNetworkWrapper;
 import net.darmo_creations.special_block_movements.network.SyncPivotMessage;
 import net.darmo_creations.special_block_movements.network.SyncRotatingStructureMessage;
@@ -37,6 +38,15 @@ public class SpecialBlockMovements {
   @SidedProxy(clientSide = "net.darmo_creations.special_block_movements.proxy.ClientProxy", serverSide = "net.darmo_creations.special_block_movements.proxy.CommonProxy")
   public static CommonProxy proxy;
 
+  private static InsulationHandler insulationHandler;
+
+  /**
+   * @return the global insulation handler
+   */
+  public static InsulationHandler getInsulationHandler() {
+    return insulationHandler;
+  }
+
   @EventHandler
   public void preInit(FMLPreInitializationEvent e) {
     ModBlocks.init();
@@ -45,6 +55,7 @@ public class SpecialBlockMovements {
 
     registerTileEntities();
     registerEntities();
+    insulationHandler = new InsulationHandler();
   }
 
   @EventHandler

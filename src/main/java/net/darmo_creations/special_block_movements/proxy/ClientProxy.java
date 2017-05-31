@@ -1,6 +1,7 @@
 package net.darmo_creations.special_block_movements.proxy;
 
 import static net.darmo_creations.special_block_movements.ModBlocks.*;
+import static net.darmo_creations.special_block_movements.ModItems.*;
 
 import net.darmo_creations.special_block_movements.entities.EntityRotatingStructure;
 import net.darmo_creations.special_block_movements.render.RenderRotatingStructure;
@@ -29,6 +30,8 @@ public class ClientProxy extends CommonProxy {
     registerBlock(SLIDER_END_MINUS);
     registerBlock(INSULATED_BLOCK);
 
+    registerItem(INSULATOR);
+
     ClientRegistry.bindTileEntitySpecialRenderer(TileEntityInsulated.class, new TileEntityInsulatedRenderer());
 
     RenderManager render = Minecraft.getMinecraft().getRenderManager();
@@ -41,7 +44,6 @@ public class ClientProxy extends CommonProxy {
    *
    * @param item the item
    */
-  @SuppressWarnings("unused")
   private static void registerItem(Item item) {
     registerItem_Impl(item, 0, item.getRegistryName().getResourcePath());
   }
