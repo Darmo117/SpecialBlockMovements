@@ -5,6 +5,7 @@ import java.util.Optional;
 import net.darmo_creations.special_block_movements.SpecialBlockMovements;
 import net.darmo_creations.special_block_movements.commons.ModItem;
 import net.darmo_creations.special_block_movements.insulation.InsulationHandler.InsulatedSides;
+import net.darmo_creations.special_block_movements.network.ModNetworkWrapper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumActionResult;
@@ -21,16 +22,11 @@ public class ItemInsulator extends ModItem {
   @Override
   public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX,
       float hitY, float hitZ) {
-    System.out.println(facing);
     if (!worldIn.isRemote) {
       Optional<InsulatedSides> sides = SpecialBlockMovements.getInsulationHandler().getInsulatedSides(pos);
 
-      if (sides.isPresent() && sides.get().hasSide(facing)) {
-        // TODO remove side
-      }
-      else {
-        // TODO add side
-      }
+      ModNetworkWrapper.getModWapper().sendToServer(
+          new InsulationPlateActionMessage(pos, facing, !sides.isPresent() || !sides.get().hasSide(facing)));
     }
 
     return EnumActionResult.PASS;

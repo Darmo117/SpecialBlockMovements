@@ -4,6 +4,9 @@ import net.darmo_creations.special_block_movements.entities.EntityRotatingStruct
 import net.darmo_creations.special_block_movements.entities.EntitySlidingStructure;
 import net.darmo_creations.special_block_movements.guis.GuiHandler;
 import net.darmo_creations.special_block_movements.insulation.InsulationHandler;
+import net.darmo_creations.special_block_movements.insulation.InsulationPlateActionMessage;
+import net.darmo_creations.special_block_movements.insulation.RenderListener;
+import net.darmo_creations.special_block_movements.insulation.SyncInsulationPlatesMessage;
 import net.darmo_creations.special_block_movements.network.ModNetworkWrapper;
 import net.darmo_creations.special_block_movements.network.SyncPivotMessage;
 import net.darmo_creations.special_block_movements.network.SyncRotatingStructureMessage;
@@ -12,6 +15,7 @@ import net.darmo_creations.special_block_movements.tile_entities.TileEntityInsul
 import net.darmo_creations.special_block_movements.tile_entities.TileEntityPivot;
 import net.darmo_creations.special_block_movements.tile_entities.TileEntitySlider;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -63,6 +67,7 @@ public class SpecialBlockMovements {
     proxy.register();
     NetworkRegistry.INSTANCE.registerGuiHandler(theMod, new GuiHandler());
     registerPackets();
+    MinecraftForge.EVENT_BUS.register(new RenderListener());
   }
 
   /**
@@ -72,6 +77,8 @@ public class SpecialBlockMovements {
     ModNetworkWrapper.registerPacket(SyncRotatingStructureMessage.ClientHandler.class, SyncRotatingStructureMessage.class, Side.CLIENT);
     ModNetworkWrapper.registerPacket(SyncPivotMessage.ServerHandler.class, SyncPivotMessage.class, Side.SERVER);
     ModNetworkWrapper.registerPacket(SyncPivotMessage.ClientHandler.class, SyncPivotMessage.class, Side.CLIENT);
+    ModNetworkWrapper.registerPacket(InsulationPlateActionMessage.ServerHandler.class, InsulationPlateActionMessage.class, Side.SERVER);
+    ModNetworkWrapper.registerPacket(SyncInsulationPlatesMessage.ClientHandler.class, SyncInsulationPlatesMessage.class, Side.CLIENT);
   }
 
   /**

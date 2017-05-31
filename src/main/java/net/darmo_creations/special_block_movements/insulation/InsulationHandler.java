@@ -16,6 +16,10 @@ public final class InsulationHandler {
     this.plates = new HashMap<>();
   }
 
+  public void reset() {
+    this.plates.clear();
+  }
+
   public void addPlate(BlockPos pos, EnumFacing side) {
     if (!this.plates.containsKey(pos))
       this.plates.put(new BlockPos(pos), new InsulatedSides());
@@ -23,8 +27,11 @@ public final class InsulationHandler {
   }
 
   public void removePlate(BlockPos pos, EnumFacing side) {
-    if (this.plates.containsKey(pos))
+    if (this.plates.containsKey(pos)) {
       this.plates.get(pos).removeSide(side);
+      if (this.plates.get(pos).getMask() == 0)
+        this.plates.remove(pos);
+    }
   }
 
   public Set<BlockPos> getAllPositions() {
@@ -44,22 +51,30 @@ public final class InsulationHandler {
   }
 
   public static final class InsulatedSides implements Cloneable {
-    private byte sides;
+    private byte mask;
 
     public InsulatedSides() {
-      this.sides = 0;
+      this((byte) 0);
+    }
+
+    public InsulatedSides(byte mask) {
+      this.mask = mask;
     }
 
     public void addSide(EnumFacing side) {
-      this.sides |= 1 << side.getIndex();
+      this.mask |= 1 << side.getIndex();
     }
 
     public void removeSide(EnumFacing side) {
-      this.sides &= ~side.getIndex();
+      this.mask &= ~(1 << side.getIndex());
     }
 
     public boolean hasSide(EnumFacing side) {
-      return (this.sides & (1 << side.getIndex())) != 0;
+      return (this.mask & (1 << side.getIndex())) != 0;
+    }
+
+    public byte getMask() {
+      return this.mask;
     }
 
     @Override
