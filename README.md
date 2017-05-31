@@ -1,2 +1,2 @@
 # SpecialBlockMovements
-Mod replacement for UgoCraft.
+This mod aims to replace UgoCraft.
