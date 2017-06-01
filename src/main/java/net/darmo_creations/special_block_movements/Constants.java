@@ -11,7 +11,7 @@ public final class Constants {
   /** Nom du mod */
   public static final String MOD_NAME = "Special Block Movements";
   /** Version du mod */
-  public static final String MOD_VERSION = "b0.1";
+  public static final String MOD_VERSION = "b0.2";
 
   private Constants() {}
 }
