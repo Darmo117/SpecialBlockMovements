@@ -5,7 +5,6 @@ import net.darmo_creations.special_block_movements.entities.EntitySlidingStructu
 import net.darmo_creations.special_block_movements.guis.GuiHandler;
 import net.darmo_creations.special_block_movements.insulation.InsulationHandler;
 import net.darmo_creations.special_block_movements.insulation.InsulationPlateActionMessage;
-import net.darmo_creations.special_block_movements.insulation.RenderListener;
 import net.darmo_creations.special_block_movements.insulation.SyncInsulationPlatesMessage;
 import net.darmo_creations.special_block_movements.network.ModNetworkWrapper;
 import net.darmo_creations.special_block_movements.network.SyncPivotMessage;
@@ -67,7 +66,7 @@ public class SpecialBlockMovements {
     proxy.register();
     NetworkRegistry.INSTANCE.registerGuiHandler(theMod, new GuiHandler());
     registerPackets();
-    MinecraftForge.EVENT_BUS.register(new RenderListener());
+    MinecraftForge.EVENT_BUS.register(insulationHandler);
   }
 
   /**

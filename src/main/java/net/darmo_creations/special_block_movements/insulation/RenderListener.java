@@ -2,6 +2,7 @@ package net.darmo_creations.special_block_movements.insulation;
 
 import org.lwjgl.opengl.GL11;
 
+import net.darmo_creations.special_block_movements.ModItems;
 import net.darmo_creations.special_block_movements.SpecialBlockMovements;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -10,10 +11,16 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class RenderListener {
   @SubscribeEvent
   public void onRender(RenderWorldLastEvent e) {
+    if (Minecraft.getMinecraft().player.getHeldItemMainhand().getItem() != ModItems.INSULATOR)
+      return;
+
     InsulationHandler handler = SpecialBlockMovements.getInsulationHandler();
 
     for (BlockPos pos : handler.getAllPositions()) {

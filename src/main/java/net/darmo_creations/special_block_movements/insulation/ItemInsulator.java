@@ -20,9 +20,9 @@ public class ItemInsulator extends ModItem {
   }
 
   @Override
-  public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX,
+  public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX,
       float hitY, float hitZ) {
-    if (!worldIn.isRemote) {
+    if (world.isRemote) {
       Optional<InsulatedSides> sides = SpecialBlockMovements.getInsulationHandler().getInsulatedSides(pos);
 
       ModNetworkWrapper.getModWapper().sendToServer(

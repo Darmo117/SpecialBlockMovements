@@ -38,7 +38,7 @@ public class InsulationPlateActionMessage implements IMessage {
   @Override
   public void fromBytes(ByteBuf buf) {
     this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-    this.side = EnumFacing.getFront(buf.readInt());
+    this.side = EnumFacing.getFront(buf.readByte());
     this.add = buf.readBoolean();
   }
 
@@ -47,7 +47,7 @@ public class InsulationPlateActionMessage implements IMessage {
     buf.writeInt(this.pos.getX());
     buf.writeInt(this.pos.getY());
     buf.writeInt(this.pos.getZ());
-    buf.writeInt(this.side.getIndex());
+    buf.writeByte(this.side.getIndex() & 3);
     buf.writeBoolean(this.add);
   }
 

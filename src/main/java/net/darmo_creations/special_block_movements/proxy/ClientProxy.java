@@ -4,6 +4,7 @@ import static net.darmo_creations.special_block_movements.ModBlocks.*;
 import static net.darmo_creations.special_block_movements.ModItems.*;
 
 import net.darmo_creations.special_block_movements.entities.EntityRotatingStructure;
+import net.darmo_creations.special_block_movements.insulation.RenderListener;
 import net.darmo_creations.special_block_movements.render.RenderRotatingStructure;
 import net.darmo_creations.special_block_movements.render.TileEntityInsulatedRenderer;
 import net.darmo_creations.special_block_movements.tile_entities.TileEntityInsulated;
@@ -12,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.item.Item;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
@@ -24,6 +26,8 @@ public class ClientProxy extends CommonProxy {
   @SuppressWarnings("deprecation")
   @Override
   public void register() {
+    MinecraftForge.EVENT_BUS.register(new RenderListener());
+
     registerBlock(PIVOT);
     registerBlock(SLIDER);
     registerBlock(SLIDER_END_PLUS);
