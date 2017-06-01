@@ -3,10 +3,13 @@ package net.darmo_creations.special_block_movements.tile_entities;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
-import net.darmo_creations.special_block_movements.blocks.BlockInsulated;
+import net.darmo_creations.special_block_movements.SpecialBlockMovements;
 import net.darmo_creations.special_block_movements.blocks.BlockPivot;
 import net.darmo_creations.special_block_movements.entities.EntityRotatingStructure;
+import net.darmo_creations.special_block_movements.insulation.InsulationHandler;
+import net.darmo_creations.special_block_movements.insulation.InsulationHandler.InsulatedSides;
 import net.darmo_creations.special_block_movements.utils.TileEntityUtils;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
@@ -89,8 +92,13 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
       if (!getStructure().isPresent() && getStructureId() == -1) {
         Map<BlockPos, IBlockState> blocks = new HashMap<>();
         BlockPos pos = getPos().offset(facing);
+        InsulationHandler handler = SpecialBlockMovements.getInsulationHandler();
+        Optional<InsulatedSides> currentSides = handler.getInsulatedSides(getPos());
+        Optional<InsulatedSides> nextSides = handler.getInsulatedSides(pos);
+        boolean insulated = currentSides.isPresent() && currentSides.get().hasSide(facing)
+            || nextSides.isPresent() && nextSides.get().hasSide(facing.getOpposite());
 
-        if (!getWorld().isAirBlock(pos)) {
+        if (!getWorld().isAirBlock(pos) && !insulated) {
           resetBlocksCount();
           if (exploreBlocks(pos, pos, blocks)) {
             if (!getWorld().isRemote) {
@@ -157,9 +165,14 @@ public class TileEntityPivot extends TileEntityStructureController<EntityRotatin
       BlockPos nextPos = currentPos.offset(facing);
       BlockPos relPos = nextPos.subtract(startPos);
       IBlockState state = getWorld().getBlockState(nextPos);
+      InsulationHandler handler = SpecialBlockMovements.getInsulationHandler();
+      Optional<InsulatedSides> currentSides = handler.getInsulatedSides(currentPos);
+      Optional<InsulatedSides> nextSides = handler.getInsulatedSides(nextPos);
+      boolean insulated = currentSides.isPresent() && currentSides.get().hasSide(facing)
+          || nextSides.isPresent() && nextSides.get().hasSide(facing.getOpposite());
 
       if (!blocks.containsKey(relPos) && !getWorld().isAirBlock(nextPos) && !(state.getBlock() instanceof ITileEntityProvider)
-          && !(state.getBlock() instanceof BlockPivot) && !(state.getBlock() instanceof BlockInsulated)) {
+          && !(state.getBlock() instanceof BlockPivot) && !insulated) {
         addBlocksCount();
         ok &= exploreBlocks(startPos, nextPos, blocks);
         if (!ok)

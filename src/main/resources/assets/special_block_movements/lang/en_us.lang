@@ -1,5 +1,7 @@
 tile.special_block_movements_pivot.name=Pivot
 
+item.special_block_movements_insulator.name=Insulator
+
 gui.pivot.title=Pivot
 gui.pivot.speed.label=Speed
 gui.pivot.direction.label=Rotation Direction
