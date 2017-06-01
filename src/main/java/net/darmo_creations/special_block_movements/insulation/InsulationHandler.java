@@ -65,7 +65,6 @@ public final class InsulationHandler {
     World world = e.getWorld();
 
     if (!world.isRemote) {
-      System.out.println("load");
       this.plates.clear();
       try {
         File f = getFile(world);
@@ -90,7 +89,6 @@ public final class InsulationHandler {
     World world = e.getWorld();
 
     if (!world.isRemote) {
-      System.out.println("save");
       try {
         ByteBuffer b = ByteBuffer.allocate(this.plates.size() * BLOCK_SIZE);
 

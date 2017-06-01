@@ -47,7 +47,7 @@ public class InsulationPlateActionMessage implements IMessage {
     buf.writeInt(this.pos.getX());
     buf.writeInt(this.pos.getY());
     buf.writeInt(this.pos.getZ());
-    buf.writeByte(this.side.getIndex() & 3);
+    buf.writeByte(this.side.getIndex() & 7);
     buf.writeBoolean(this.add);
   }
 
