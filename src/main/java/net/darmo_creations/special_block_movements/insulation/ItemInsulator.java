@@ -29,6 +29,6 @@ public class ItemInsulator extends ModItem {
           new InsulationPlateActionMessage(pos, facing, !sides.isPresent() || !sides.get().hasSide(facing)));
     }
 
-    return EnumActionResult.PASS;
+    return EnumActionResult.SUCCESS;
   }
 }
