@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.darmo_creations.special_block_movements.ModBlocks;
-import net.darmo_creations.special_block_movements.blocks.BlockInsulated;
 import net.darmo_creations.special_block_movements.blocks.BlockPivot;
 import net.darmo_creations.special_block_movements.blocks.BlockSlider;
 import net.darmo_creations.special_block_movements.entities.EntitySlidingStructure;
@@ -125,7 +124,7 @@ public class TileEntitySlider extends TileEntityStructureController<EntitySlidin
       IBlockState state1 = getWorld().getBlockState(nextPos);
 
       if (!blocks.containsKey(relPos) && !getWorld().isAirBlock(nextPos) && !(state1.getBlock() instanceof ITileEntityProvider)
-          && !(state1.getBlock() instanceof BlockSlider) && !(state.getBlock() instanceof BlockInsulated)) {
+          && !(state1.getBlock() instanceof BlockSlider)) {
         addBlocksCount();
         ok &= exploreBlocks(startPos, nextPos, blocks);
         if (!ok)

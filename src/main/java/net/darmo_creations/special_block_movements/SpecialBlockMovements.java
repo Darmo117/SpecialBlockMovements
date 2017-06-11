@@ -10,7 +10,6 @@ import net.darmo_creations.special_block_movements.network.ModNetworkWrapper;
 import net.darmo_creations.special_block_movements.network.SyncPivotMessage;
 import net.darmo_creations.special_block_movements.network.SyncRotatingStructureMessage;
 import net.darmo_creations.special_block_movements.proxy.CommonProxy;
-import net.darmo_creations.special_block_movements.tile_entities.TileEntityInsulated;
 import net.darmo_creations.special_block_movements.tile_entities.TileEntityPivot;
 import net.darmo_creations.special_block_movements.tile_entities.TileEntitySlider;
 import net.minecraft.util.ResourceLocation;
@@ -86,7 +85,6 @@ public class SpecialBlockMovements {
   private void registerTileEntities() {
     GameRegistry.registerTileEntity(TileEntityPivot.class, "pivot");
     GameRegistry.registerTileEntity(TileEntitySlider.class, "slider");
-    GameRegistry.registerTileEntity(TileEntityInsulated.class, "insulated_block");
   }
 
   /**
