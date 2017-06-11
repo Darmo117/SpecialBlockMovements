@@ -26,6 +26,9 @@ public final class ModBlocks {
     register(SLIDER);
     register(SLIDER_END_PLUS);
     register(SLIDER_END_MINUS);
+    SLIDER.setCreativeTab(null);
+    SLIDER_END_PLUS.setCreativeTab(null);
+    SLIDER_END_MINUS.setCreativeTab(null);
   }
 
   /**
